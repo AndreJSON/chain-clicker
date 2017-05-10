@@ -110,7 +110,7 @@ mole = {
 			for(i = 0; i < 4; i+=1) {
 				if(mole.getElement(mole.wc.growthStatuses[i]).innerHTML === '(ready)') {
 					mole.clickElement(mole.getElement(mole.wc.trees[i]));
-					//confirmLogs();
+					console.log(i + " is ready");
 				}
 			}
 		}
@@ -150,10 +150,13 @@ mole = {
 		if(mole.getElement('potionCheckbox').checked) {
 			setTimeout(mole.brewing.drink, 1000);
 		}
+		if(mole.getElement('wcCheckbox').checked) {
+			setTimeout(mole.wc.harvestTrees, 1000);
+		}
 		setTimeout(mole.main, 5000);
 	},
 	navPanel: 
-		'<span class="notif-box" style="height:50px;width:250px;">' +
+		'<span class="notif-box" style="height:50px;width:320px;">' +
 			'<div style="display:inline">' +
 				'<input type="checkbox" id="smeltCheckbox">' +
 				'<button style="height:52px; width:55px; background:#FFFFFF" id="smeltButton" onclick="mole.crafting.changeBar()">' + 
@@ -170,6 +173,12 @@ mole = {
 				'<input type="checkbox" id="potionCheckbox">' +
 				'<button style="height:52px; width:55px; background:#FFFFFF" id="potionButton" onclick="">' + 
 					'sd pot' + 
+				'</button>' +
+			'</div>' +
+			'<div style="display:inline">' +
+				'<input type="checkbox" id="wcCheckbox">' +
+				'<button style="height:52px; width:45px; background:#FFFFFF" id="wcButton" onclick="">' + 
+					'chop' + 
 				'</button>' +
 			'</div>' +
 		'</span>'
