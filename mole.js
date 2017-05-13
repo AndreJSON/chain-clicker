@@ -46,8 +46,8 @@ mole = {
 				}
 			}
 		},
-		changeBar: function () {
-			mole.runtimeOptions.barType = (mole.runtimeOptions.barType + 1) % mole.crafting.bars.length;
+		changeBar: function (barType) {
+			mole.runtimeOptions.barType = barType % mole.crafting.bars.length;
 			mole.getElement('smeltButton').innerHTML = mole.crafting.bars[mole.runtimeOptions.barType].name;
 		}
 	},
@@ -73,8 +73,8 @@ mole = {
 				}
 			}
 		},
-		changeSeed: function () {
-			mole.runtimeOptions.seedType = (mole.runtimeOptions.seedType + 1) % mole.farming.seeds.length;
+		changeSeed: function (seedType) {
+			mole.runtimeOptions.seedType = seedType % mole.farming.seeds.length;
 			mole.getElement('seedButton').innerHTML = mole.farming.seeds[mole.runtimeOptions.seedType].name;
 		}
 	},
@@ -137,8 +137,50 @@ mole = {
 	addNavPanel: function() {
 		mole.prependHTML(mole.getElement(mole.g.effectBar), mole.navPanel);
 	},
-	prependHTML(element, text) {
+	prependHTML: function(element, text) {
 		element.innerHTML = text + element.innerHTML;
+	},
+	createCookie: function(name,value,days) {
+		var expires = "";
+		if (days) {
+			var date = new Date();
+			date.setTime(date.getTime() + (days*24*60*60*1000));
+			expires = "; expires=" + date.toUTCString();
+		}
+		document.cookie = name + "=" + value + expires + "; path=/";
+	},
+	readCookie: function(name, defaultValue) {
+		var nameEQ = name + "=";
+		var ca = document.cookie.split(';');
+		for(var i=0;i < ca.length;i++) {
+			var c = ca[i];
+			while (c.charAt(0)===' '){
+				c = c.substring(1,c.length);
+			}
+			if (c.indexOf(nameEQ) === 0) {
+				return c.substring(nameEQ.length,c.length);
+			}
+		}
+		return defaultValue;
+	},
+	saveToCookie: function () {
+		mole.createCookie('barType', mole.runtimeOptions.barType, 100);
+		mole.createCookie('smeltCheckbox', mole.getElement('smeltCheckbox').checked);
+		mole.createCookie('seedType', mole.runtimeOptions.seedType, 100);
+		mole.createCookie('seedCheckbox', mole.getElement('seedCheckbox').checked);
+		mole.createCookie('potionCheckbox', mole.getElement('potionCheckbox').checked);
+		mole.createCookie('wcCheckbox', mole.getElement('wcCheckbox').checked);
+	},
+	loadFromCookie: function () {
+		mole.crafting.changeBar(mole.readCookie('barType',0));
+		mole.getElement('smeltCheckbox').checked = (mole.readCookie('smeltCheckbox', 'false') === 'true');
+		mole.farming.changeSeed(mole.readCookie('seedType',0));
+		mole.getElement('seedCheckbox').checked =  (mole.readCookie('seedCheckbox', 'false') === 'true');
+		mole.getElement('potionCheckbox').checked =  (mole.readCookie('potionCheckbox', 'false') === 'true');
+		mole.getElement('wcCheckbox').checked =  (mole.readCookie('wcCheckbox', 'false') === 'true');
+	},
+	reloadPage: function () {
+		window.location.reload(false);
 	},
 	main: function () {
 		if(mole.getElement('smeltCheckbox').checked) {
@@ -153,19 +195,20 @@ mole = {
 		if(mole.getElement('wcCheckbox').checked) {
 			setTimeout(mole.wc.harvestTrees, 1000);
 		}
+		mole.saveToCookie();
 		setTimeout(mole.main, 5000);
 	},
 	navPanel: 
 		'<span class="notif-box" style="height:50px;width:320px;">' +
 			'<div style="display:inline">' +
 				'<input type="checkbox" id="smeltCheckbox">' +
-				'<button style="height:52px; width:55px; background:#FFFFFF" id="smeltButton" onclick="mole.crafting.changeBar()">' + 
+				'<button style="height:52px; width:55px; background:#FFFFFF" id="smeltButton" onclick="mole.crafting.changeBar(mole.runtimeOptions.barType+1)">' + 
 					'bronze' + 
 				'</button>' +
 			'</div>' +
 			'<div style="display:inline">' +
 				'<input type="checkbox" id="seedCheckbox">' +
-				'<button style="height:52px; width:75px; background:#FFFFFF" id="seedButton" onclick="mole.farming.changeSeed()">' + 
+				'<button style="height:52px; width:75px; background:#FFFFFF" id="seedButton" onclick="mole.farming.changeSeed(mole.runtimeOptions.seedType+1)">' + 
 					'redshroom' + 
 				'</button>' +
 			'</div>' +
@@ -184,16 +227,5 @@ mole = {
 		'</span>'
 };
 
-setTimeout(function () {mole.addNavPanel();mole.main();}, 2000);
-
-/*
-	function confirmLogs() { //Timing problem as of now.
-		var boxChildren = getElement(a.wc.confirmBox).childNodes;
-		var i;
-		for(i = 0; i < boxChildren.length; i+=1) {
-			if(boxChildren[i].localName === 'input' && boxChildren[i].type === 'button') {
-				clickElement(boxChildren[i]);
-			}
-		}
-	}
-*/
+setTimeout(function () {console.log('hello');}, 5000);
+setTimeout(function () {mole.addNavPanel();mole.loadFromCookie();mole.main();}, 2000);
