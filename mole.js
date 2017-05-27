@@ -121,7 +121,7 @@ mole = {
 		fightSelector: 'dialogue-fight',
 		monsterWindow: 'monster-area',
 		fight : function () {
-			if(mole.getElement(mole.cb.cooldown).innerHTML === "Ready" && mole.getElement(mole.cb.monsterWindow).style.display !== 'none') {
+			if(mole.getElement(mole.cb.cooldown).innerHTML === "Ready" && mole.getElement(mole.cb.monsterWindow).style.display === 'none') {
 				var i, children = mole.getElement(mole.cb.fightSelector).childNodes;
 				for (i = 0; i < children.length; i+=1) {
 					if(children[i].localName === "table") {
