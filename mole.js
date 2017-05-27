@@ -115,6 +115,23 @@ mole = {
 			}
 		}
 	},
+	cb : {
+		cooldown: 'fight-cooldown',
+		combatContainer: 'tab-sub-container-combat',
+		fightSelector: 'dialogue-fight',
+		monsterWindow: 'monster-area',
+		fight : function () {
+			if(mole.getElement(mole.cb.cooldown).innerHTML === "Ready" && mole.getElement(mole.cb.monsterWindow).style.display !== 'none') {
+				var i, children = mole.getElement(mole.cb.fightSelector).childNodes;
+				for (i = 0; i < children.length; i+=1) {
+					if(children[i].localName === "table") {
+						mole.clickElement(children[i].childNodes[1].childNodes[6]);
+						mole.clickElement(mole.getElement(mole.g.confirmButton));
+					}
+				}
+			}
+		}
+	},
 	g : { //g for general
 		confirmButton : 'dialogue-confirm-yes',
 		effectBar : 'notifaction-area'
@@ -170,6 +187,7 @@ mole = {
 		mole.createCookie('seedCheckbox', mole.getElement('seedCheckbox').checked);
 		mole.createCookie('potionCheckbox', mole.getElement('potionCheckbox').checked);
 		mole.createCookie('wcCheckbox', mole.getElement('wcCheckbox').checked);
+		mole.createCookie('cbCheckbox', mole.getElement('cbCheckbox').checked);
 	},
 	loadFromCookie: function () {
 		mole.crafting.changeBar(mole.readCookie('barType',0));
@@ -178,6 +196,7 @@ mole = {
 		mole.getElement('seedCheckbox').checked =  (mole.readCookie('seedCheckbox', 'false') === 'true');
 		mole.getElement('potionCheckbox').checked =  (mole.readCookie('potionCheckbox', 'false') === 'true');
 		mole.getElement('wcCheckbox').checked =  (mole.readCookie('wcCheckbox', 'false') === 'true');
+		mole.getElement('cbCheckbox').checked =  (mole.readCookie('cbCheckbox', 'false') === 'true');
 	},
 	reloadPage: function () {
 		window.location.reload(false);
@@ -195,11 +214,14 @@ mole = {
 		if(mole.getElement('wcCheckbox').checked) {
 			setTimeout(mole.wc.harvestTrees, 1000);
 		}
+		if(mole.getElement('cbCheckbox').checked) {
+			setTimeout(mole.cb.fight, 1000);
+		}
 		mole.saveToCookie();
 		setTimeout(mole.main, 5000);
 	},
 	navPanel: 
-		'<span class="notif-box" style="height:50px;width:320px;">' +
+		'<span class="notif-box" style="height:50px;width:400px;">' +
 			'<div style="display:inline">' +
 				'<input type="checkbox" id="smeltCheckbox">' +
 				'<button style="height:52px; width:55px; background:#FFFFFF" id="smeltButton" onclick="mole.crafting.changeBar(mole.runtimeOptions.barType+1)">' + 
@@ -224,7 +246,17 @@ mole = {
 					'chop' + 
 				'</button>' +
 			'</div>' +
+			'<div style="display:inline">' +
+				'<input type="checkbox" id="cbCheckbox">' +
+				'<button style="height:52px; width:70px; background:#FFFFFF" id="cbButton" onclick="">' + 
+					'combat' + 
+				'</button>' +
+			'</div>' +
 		'</span>'
 };
 
-setTimeout(function () {mole.addNavPanel();mole.loadFromCookie();mole.main();}, 2000);
+setTimeout(function () {mole.addNavPanel();}, 1000);
+setTimeout(function () {mole.loadFromCookie();}, 1500);
+setTimeout(function () {mole.selectTab('farming');}, 2000);
+setTimeout(function () {mole.main();}, 2000);
+setTimeout(function () {mole.reloadPage();}, 1000*1000);
