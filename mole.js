@@ -227,5 +227,4 @@ mole = {
 		'</span>'
 };
 
-setTimeout(function () {console.log('hello');}, 5000);
 setTimeout(function () {mole.addNavPanel();mole.loadFromCookie();mole.main();}, 2000);
